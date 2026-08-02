@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palette Ranking Poll</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      color: #1a1a1a;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .instructions {
+      background: #f9f9f9;
+      border-left: 3px solid #378ADD;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #555;
+    }
+    .ranking-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .palette-item {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .palette-item:hover {
+      border-color: #378ADD;
+      box-shadow: 0 2px 8px rgba(55, 138, 221, 0.1);
+    }
+    .palette-item.dragging {
+      opacity: 0.5;
+    }
+    .palette-item.drag-over {
+      border: 2px dashed #378ADD;
+      background: #f0f7ff;
+    }
+    .rank-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #999;
+      flex-shrink: 0;
+    }
+    .palette-content {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .color-preview {
+      display: flex;
+      gap: 6px;
+    }
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 0.5px solid #ddd;
+    }
+    .palette-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .palette-info p {
+      font-size: 12px;
+      color: #888;
+    }
+    .drag-handle {
+      color: #ccc;
+      font-size: 18px;
+      cursor: grab;
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #378ADD;
+      box-shadow: 0 0 0 2px rgba(55, 138, 221, 0.1);
+    }
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    button {
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      border-color: #999;
+      background: #f9f9f9;
+    }
+    .submit-btn {
+      background: #378ADD;
+      color: white;
+      border-color: #378ADD;
+      grid-column: 2;
+    }
+    .submit-btn:hover {
+      background: #2a5f9e;
+      border-color: #2a5f9e;
+    }
+    .submit-btn:disabled {
+      background: #ccc;
+      border-color: #ccc;
+      cursor: not-allowed;
+    }
+    .status {
+      text-align: center;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 16px;
+      display: none;
+      font-size: 14px;
+    }
+    .status.success {
+      background: #eafce4;
+      color: #1a6d1a;
+      display: block;
+    }
+    .status.error {
+      background: #ffe8e8;
+      color: #8a1a1a;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Palette Ranking Poll</h1>
+    <p class="subtitle">Rank the color palettes for our app design</p>
+    
+    <div class="instructions">
+      Drag to reorder palettes by preference. Your top choice should be at the top.
+    </div>
+
+    <form id="rankingForm">
+      <div class="form-group">
+        <label for="name">Your name</label>
+        <input type="text" id="name" name="name" placeholder="e.g., Alex Chen" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (optional)</label>
+        <input type="email" id="email" name="email" placeholder="your.email@company.com">
+      </div>
+
+      <div class="ranking-list" id="rankingList">
+        <div class="palette-item" draggable="true" data-palette="1">
+          <div class="rank-badge">1</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #00A36D;"></div>
+              <div class="color-swatch" style="background: #FFC95C;"></div>
+              <div class="color-swatch" style="background: #EFA9AE;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 1: Deep Green</h3>
+              <p>Fresh, social, friendly</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="2">
+          <div class="rank-badge">2</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #C4C98B;"></div>
+              <div class="color-swatch" style="background: #BF9380;"></div>
+              <div class="color-swatch" style="background: #FCD787;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 2: Muted Green</h3>
+              <p>Earthy, subdued, calm</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="3">
+          <div class="rank-badge">3</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #95B259;"></div>
+              <div class="color-swatch" style="background: #BF9380;"></div>
+              <div class="color-swatch" style="background: #EACE8F;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 3: Lime Green</h3>
+              <p>Balanced, warm, natural</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="4">
+          <div class="rank-badge">4</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #95B259;"></div>
+              <div class="color-swatch" style="background: #FFC95C;"></div>
+              <div class="color-swatch" style="background: #E88E31;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 4: Warm Yellow</h3>
+              <p>Energetic, vibrant, fun</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="5">
+          <div class="rank-badge">5</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #BAC447;"></div>
+              <div class="color-swatch" style="background: #BF9380;"></div>
+              <div class="color-swatch" style="background: #E69D55;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 5: Lime + Warm</h3>
+              <p>Cheerful, optimistic, creative</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="6">
+          <div class="rank-badge">6</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #245178;"></div>
+              <div class="color-swatch" style="background: #F47B46;"></div>
+              <div class="color-swatch" style="background: #9D5F40;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 6: Navy + Coral</h3>
+              <p>Professional, trustworthy, bold</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="7">
+          <div class="rank-badge">7</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #92B2D3;"></div>
+              <div class="color-swatch" style="background: #E88E31;"></div>
+              <div class="color-swatch" style="background: #AD691F;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 7: Soft Blue</h3>
+              <p>Approachable, gentle, modern</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-item" draggable="true" data-palette="8">
+          <div class="rank-badge">8</div>
+          <div class="palette-content">
+            <div class="color-preview">
+              <div class="color-swatch" style="background: #185FA5;"></div>
+              <div class="color-swatch" style="background: #E88E31;"></div>
+              <div class="color-swatch" style="background: #AD691F;"></div>
+            </div>
+            <div class="palette-info">
+              <h3>Palette 8: Deep Blue</h3>
+              <p>Confident, authoritative, premium</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="reset">Reset</button>
+        <button type="submit" class="submit-btn">Submit ranking</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <script>
+    // CONFIGURATION - UPDATE GITHUB_TOKEN with your personal access token
+    const GITHUB_TOKEN = 'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    const REPO_OWNER = 'alexTrod';
+    const REPO_NAME = 'color_polling';
+    const CSV_FILE = 'results.csv';
+
+    const form = document.getElementById('rankingForm');
+    const list = document.getElementById('rankingList');
+    const statusDiv = document.getElementById('status');
+    let draggedElement = null;
+
+    list.addEventListener('dragstart', (e) => {
+      draggedElement = e.target.closest('.palette-item');
+      draggedElement.classList.add('dragging');
+    });
+
+    list.addEventListener('dragend', (e) => {
+      draggedElement.classList.remove('dragging');
+      document.querySelectorAll('.palette-item').forEach(item => {
+        item.classList.remove('drag-over');
+      });
+    });
+
+    list.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const afterElement = getDragAfterElement(list, e.clientY);
+      if (afterElement == null) {
+        list.appendChild(draggedElement);
+      } else {
+        list.insertBefore(draggedElement, afterElement);
+      }
+    });
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll('.palette-item:not(.dragging)')];
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function updateRankings() {
+      document.querySelectorAll('.palette-item').forEach((item, index) => {
+        item.querySelector('.rank-badge').textContent = index + 1;
+      });
+    }
+
+    list.addEventListener('drop', () => {
+      updateRankings();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      
+      if (!name) {
+        statusDiv.textContent = 'Please enter your name';
+        statusDiv.className = 'status error';
+        return;
+      }
+
+      const rankings = Array.from(document.querySelectorAll('.palette-item')).map((item, index) => ({
+        rank: index + 1,
+        palette: item.dataset.palette
+      }));
+
+      const timestamp = new Date().toISOString();
+      const csvRow = `"${timestamp}","${name}","${email}",${rankings.map(r => `Palette ${r.palette}`).join(',')}`;
+
+      const submitBtn = form.querySelector('.submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        // Get current CSV content
+        const getResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_FILE}`,
+          {
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          }
+        );
+
+        let sha = null;
+        let currentContent = 'timestamp,name,email,rank_1,rank_2,rank_3,rank_4,rank_5,rank_6,rank_7,rank_8';
+        
+        if (getResponse.ok) {
+          const data = await getResponse.json();
+          sha = data.sha;
+          currentContent = atob(data.content);
+        }
+
+        // Add new row
+        const newContent = currentContent + '\n' + csvRow;
+        const encodedContent = btoa(newContent);
+
+        // Commit to GitHub
+        const putResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_FILE}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Add ranking from ${name}`,
+              content: encodedContent,
+              ...(sha && { sha })
+            })
+          }
+        );
+
+        if (putResponse.ok) {
+          statusDiv.textContent = 'Thanks! Your ranking has been saved.';
+          statusDiv.className = 'status success';
+          form.reset();
+          document.querySelectorAll('.palette-item').forEach((item, index) => {
+            item.querySelector('.rank-badge').textContent = index + 1;
+          });
+        } else {
+          const errorData = await putResponse.json();
+          throw new Error(errorData.message || 'Save failed');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        statusDiv.textContent = 'Error saving ranking. Check console for details.';
+        statusDiv.className = 'status error';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit ranking';
+      }
+    });
+  </script>
+</body>
+</html>
