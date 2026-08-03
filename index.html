@@ -13,22 +13,12 @@
       line-height: 1.6;
     }
     .container {
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
       background: white;
       border-radius: 12px;
       padding: 32px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 12px;
-      color: #1a1a1a;
-    }
-    .subtitle {
-      color: #666;
-      margin-bottom: 32px;
-      font-size: 14px;
     }
     .instructions {
       background: #f9f9f9;
@@ -41,18 +31,18 @@
     }
     .ranking-list {
       display: grid;
-      gap: 12px;
+      gap: 14px;
       margin-bottom: 24px;
     }
     .palette-item {
       background: white;
       border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 10px;
       cursor: move;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       transition: all 0.2s;
       user-select: none;
     }
@@ -71,48 +61,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       background: #f0f0f0;
-      border-radius: 6px;
+      border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 16px;
       color: #999;
       flex-shrink: 0;
     }
-    .palette-content {
+    .color-preview {
       flex: 1;
       display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .color-preview {
-      display: flex;
-      gap: 6px;
+      gap: 0;
+      height: 72px;
+      border-radius: 8px;
+      overflow: hidden;
     }
     .color-swatch {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
-      border: 0.5px solid #ddd;
-    }
-    .palette-info h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-    .palette-info p {
-      font-size: 12px;
-      color: #888;
-    }
-    .drag-handle {
-      color: #ccc;
-      font-size: 18px;
-      cursor: grab;
-    }
-    .drag-handle:active {
-      cursor: grabbing;
+      flex: 1;
+      height: 100%;
+      border: none;
     }
     .form-group {
       margin-bottom: 20px;
@@ -124,8 +93,7 @@
       margin-bottom: 6px;
       color: #1a1a1a;
     }
-    input[type="text"],
-    input[type="email"] {
+    input[type="text"] {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid #ddd;
@@ -133,8 +101,7 @@
       font-size: 14px;
       font-family: inherit;
     }
-    input[type="text"]:focus,
-    input[type="email"]:focus {
+    input[type="text"]:focus {
       outline: none;
       border-color: #378ADD;
       box-shadow: 0 0 0 2px rgba(55, 138, 221, 0.1);
@@ -196,9 +163,6 @@
 </head>
 <body>
   <div class="container">
-    <h1>Palette Ranking Poll</h1>
-    <p class="subtitle">Rank the color palettes for our app design</p>
-    
     <div class="instructions">
       Drag to reorder palettes by preference. Your top choice should be at the top.
     </div>
@@ -209,129 +173,76 @@
         <input type="text" id="name" name="name" placeholder="e.g., Alex Chen" required>
       </div>
 
-      <div class="form-group">
-        <label for="email">Email (optional)</label>
-        <input type="email" id="email" name="email" placeholder="your.email@company.com">
-      </div>
-
       <div class="ranking-list" id="rankingList">
         <div class="palette-item" draggable="true" data-palette="1">
           <div class="rank-badge">1</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #00A36D;"></div>
-              <div class="color-swatch" style="background: #FFC95C;"></div>
-              <div class="color-swatch" style="background: #EFA9AE;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 1: Deep Green</h3>
-              <p>Fresh, social, friendly</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #00A36D;"></div>
+            <div class="color-swatch" style="background: #FFC95C;"></div>
+            <div class="color-swatch" style="background: #EFA9AE;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="2">
           <div class="rank-badge">2</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #C4C98B;"></div>
-              <div class="color-swatch" style="background: #BF9380;"></div>
-              <div class="color-swatch" style="background: #FCD787;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 2: Muted Green</h3>
-              <p>Earthy, subdued, calm</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #C4C98B;"></div>
+            <div class="color-swatch" style="background: #BF9380;"></div>
+            <div class="color-swatch" style="background: #FCD787;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="3">
           <div class="rank-badge">3</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #95B259;"></div>
-              <div class="color-swatch" style="background: #BF9380;"></div>
-              <div class="color-swatch" style="background: #EACE8F;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 3: Lime Green</h3>
-              <p>Balanced, warm, natural</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #95B259;"></div>
+            <div class="color-swatch" style="background: #BF9380;"></div>
+            <div class="color-swatch" style="background: #EACE8F;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="4">
           <div class="rank-badge">4</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #95B259;"></div>
-              <div class="color-swatch" style="background: #FFC95C;"></div>
-              <div class="color-swatch" style="background: #E88E31;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 4: Warm Yellow</h3>
-              <p>Energetic, vibrant, fun</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #95B259;"></div>
+            <div class="color-swatch" style="background: #FFC95C;"></div>
+            <div class="color-swatch" style="background: #E88E31;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="5">
           <div class="rank-badge">5</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #BAC447;"></div>
-              <div class="color-swatch" style="background: #BF9380;"></div>
-              <div class="color-swatch" style="background: #E69D55;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 5: Lime + Warm</h3>
-              <p>Cheerful, optimistic, creative</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #BAC447;"></div>
+            <div class="color-swatch" style="background: #BF9380;"></div>
+            <div class="color-swatch" style="background: #E69D55;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="6">
           <div class="rank-badge">6</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #245178;"></div>
-              <div class="color-swatch" style="background: #F47B46;"></div>
-              <div class="color-swatch" style="background: #9D5F40;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 6: Navy + Coral</h3>
-              <p>Professional, trustworthy, bold</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #245178;"></div>
+            <div class="color-swatch" style="background: #F47B46;"></div>
+            <div class="color-swatch" style="background: #9D5F40;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="7">
           <div class="rank-badge">7</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #92B2D3;"></div>
-              <div class="color-swatch" style="background: #E88E31;"></div>
-              <div class="color-swatch" style="background: #AD691F;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 7: Soft Blue</h3>
-              <p>Approachable, gentle, modern</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #92B2D3;"></div>
+            <div class="color-swatch" style="background: #E88E31;"></div>
+            <div class="color-swatch" style="background: #AD691F;"></div>
           </div>
         </div>
 
         <div class="palette-item" draggable="true" data-palette="8">
           <div class="rank-badge">8</div>
-          <div class="palette-content">
-            <div class="color-preview">
-              <div class="color-swatch" style="background: #185FA5;"></div>
-              <div class="color-swatch" style="background: #E88E31;"></div>
-              <div class="color-swatch" style="background: #AD691F;"></div>
-            </div>
-            <div class="palette-info">
-              <h3>Palette 8: Deep Blue</h3>
-              <p>Confident, authoritative, premium</p>
-            </div>
+          <div class="color-preview">
+            <div class="color-swatch" style="background: #185FA5;"></div>
+            <div class="color-swatch" style="background: #E88E31;"></div>
+            <div class="color-swatch" style="background: #AD691F;"></div>
           </div>
         </div>
       </div>
@@ -406,7 +317,6 @@
       e.preventDefault();
       
       const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
       
       if (!name) {
         statusDiv.textContent = 'Please enter your name';
@@ -420,14 +330,13 @@
       }));
 
       const timestamp = new Date().toISOString();
-      const csvRow = `"${timestamp}","${name}","${email}",${rankings.map(r => `Palette ${r.palette}`).join(',')}`;
+      const csvRow = `"${timestamp}","${name}","",${rankings.map(r => `Palette ${r.palette}`).join(',')}`;
 
       const submitBtn = form.querySelector('.submit-btn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting...';
 
       try {
-        // Get current CSV content
         const getResponse = await fetch(
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_FILE}`,
           {
@@ -447,11 +356,9 @@
           currentContent = atob(data.content);
         }
 
-        // Add new row
         const newContent = currentContent + '\n' + csvRow;
         const encodedContent = btoa(newContent);
 
-        // Commit to GitHub
         const putResponse = await fetch(
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_FILE}`,
           {
